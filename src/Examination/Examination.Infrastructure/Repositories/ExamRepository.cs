@@ -13,11 +13,10 @@ namespace Examination.Infrastructure.Repositories
         public ExamRepository(
             IMongoClient mongoClient,
             IClientSessionHandle clientSessionHandle,
-            string collection,
             IOptions<ExamSettings> settings,
             IMediator mediator
             )
-        : base(mongoClient, clientSessionHandle, settings, mediator, collection)
+        : base(mongoClient, clientSessionHandle, settings, mediator, Constants.Collections.Exam)
         {
         }
 
