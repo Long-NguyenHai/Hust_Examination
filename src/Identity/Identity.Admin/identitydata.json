@@ -1,0 +1,25 @@
+﻿{
+  "IdentityData": {
+    "Roles": [
+      {
+        "Name": "Administrator"
+      }
+    ],
+    "Users": [
+      {
+        "Username": "admin",
+        "Password": "Admin@123$",
+        "Email": "admin@longhust.com.vn",
+        "Roles": [
+          "Administrator"
+        ],
+        "Claims": [
+          {
+            "Type": "name",
+            "Value": "admin"
+          }
+        ]
+      }
+    ]
+  }
+}
