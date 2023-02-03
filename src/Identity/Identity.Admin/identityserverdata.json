@@ -88,6 +88,7 @@
                 "AllowedGrantTypes": [
                     "authorization_code"
                 ],
+                "AllowAccessTokensViaBrowser": true,
                 "RequirePkce": true,
                 "ClientSecrets": [
                     {
@@ -118,6 +119,7 @@
                 "AllowedGrantTypes": [
                     "authorization_code"
                 ],
+                "AllowAccessTokensViaBrowser": true,
                 "RequirePkce": true,
                 "ClientSecrets": [
                     {
@@ -148,6 +150,8 @@
                 "AllowedGrantTypes": [
                     "authorization_code"
                 ],
+                "AllowAccessTokensViaBrowser": true,
+                "AllowOfflineAccess": true,
                 "RequirePkce": true,
                 "ClientSecrets": [
                     {
@@ -175,8 +179,9 @@
                 "ClientId": "exam_api_swaggerui",
                 "ClientName": "Exam API Swagger UI",
                 "AllowedGrantTypes": [
-                    "authorization_code"
+                    "implicit"
                 ],
+                "AllowAccessTokensViaBrowser": true,
                 "RequireClientSecret": false,
                 "RequirePkce": true,
                 "RedirectUris": [
