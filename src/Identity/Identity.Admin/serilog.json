@@ -21,7 +21,7 @@
                 "Name": "MSSqlServer",
                 "Args": {
                     "connectionString": "",
-                    "tableName": "Log",
+                    "tableName": "Logs",
                     "columnOptionsSection": {
                         "addStandardColumns": [ "LogEvent" ],
                         "removeStandardColumns": [ "Properties" ]

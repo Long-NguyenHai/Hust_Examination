@@ -11,6 +11,10 @@
         {
             "name": "Run All Apis",
             "configurations": ["Identity.STS.Identity", "Exam.API"]
+        },
+        {
+            "name": "Run Admin App",
+            "configurations": ["Identity.STS.Identity", "Exam.API", "AdminApps"]
         }
     ],
     "configurations": [
@@ -67,6 +71,26 @@
             "serverReadyAction": {
                 "action": "openExternally",
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            }
+        },
+        {
+            "name": "AdminApps",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/WebApps/AdminApps/bin/Debug/net6.0/AdminApps.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/WebApps/AdminApps",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
