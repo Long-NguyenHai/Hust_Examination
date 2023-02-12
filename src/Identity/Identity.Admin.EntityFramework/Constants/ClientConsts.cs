@@ -12,8 +12,7 @@ namespace Identity.Admin.EntityFramework.Constants
                 "SharedSecret",
                 "X509Thumbprint",
                 "X509Name",
-                "X509CertificateBase64",
-                "JWK"
+                "X509CertificateBase64"
             };
 
             return secretTypes;

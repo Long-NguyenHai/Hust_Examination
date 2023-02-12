@@ -19,14 +19,14 @@
             },
             {
                 "Name": "MSSqlServer",
-                "Args": {
-                    "connectionString": "",
-                    "tableName": "Logs",
-                    "columnOptionsSection": {
-                        "addStandardColumns": [ "LogEvent" ],
-                        "removeStandardColumns": [ "Properties" ]
-                    }
+              "Args": {
+                "connectionString": "Server=.;Database=IdentityDb;Trusted_Connection=True;MultipleActiveResultSets=true",
+                "tableName": "Log",
+                "columnOptionsSection": {
+                  "addStandardColumns": [ "LogEvent" ],
+                  "removeStandardColumns": [ "Properties" ]
                 }
+              }
             }
         ]
     }

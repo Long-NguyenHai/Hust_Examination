@@ -20,7 +20,7 @@ namespace Identity.Admin.UI.Areas.AdminUI.Controllers
         private readonly IStringLocalizer<GrantController> _localizer;
 
         public GrantController(IPersistedGrantAspNetIdentityService persistedGrantService,
-            ILogger<GrantController> logger,
+            ILogger<ConfigurationController> logger,
             IStringLocalizer<GrantController> localizer) : base(logger)
         {
             _persistedGrantService = persistedGrantService;

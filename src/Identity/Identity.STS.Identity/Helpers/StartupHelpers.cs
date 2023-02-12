@@ -19,16 +19,18 @@ using Identity.STS.Identity.Configuration.Constants;
 using Identity.STS.Identity.Configuration.Interfaces;
 using Identity.STS.Identity.Helpers.Localization;
 using System.Linq;
-using IdentityServer4.Configuration;
 using Identity.Admin.EntityFramework.Interfaces;
 using Identity.Admin.EntityFramework.Helpers;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Identity.Web;
 using Identity.Admin.EntityFramework.Configuration.Configuration;
+using Identity.Admin.EntityFramework.Configuration.MySql;
+using Identity.Admin.EntityFramework.Configuration.PostgreSQL;
 using Identity.Admin.EntityFramework.Configuration.SqlServer;
 using Identity.Shared.Configuration.Authentication;
 using Identity.Shared.Configuration.Configuration.Identity;
+using Identity.STS.Identity.Services;
 
 namespace Identity.STS.Identity.Helpers
 {
@@ -113,13 +115,10 @@ namespace Identity.STS.Identity.Helpers
             {
                 app.UseCsp(csp =>
                 {
-                    var imagesSources = new List<string> { "data:" };
-                    imagesSources.AddRange(cspTrustedDomains);
-
                     csp.ImageSources(options =>
                     {
                         options.SelfSrc = true;
-                        options.CustomSources = imagesSources;
+                        options.CustomSources = cspTrustedDomains;
                         options.Enabled = true;
                     });
                     csp.FontSources(options =>
@@ -142,35 +141,11 @@ namespace Identity.STS.Identity.Helpers
                         options.Enabled = true;
                         options.UnsafeInlineSrc = true;
                     });
-                    csp.Sandbox(options =>
-                    {
-                        options.AllowForms()
-                            .AllowSameOrigin()
-                            .AllowScripts();
-                    });
-                    csp.FrameAncestors(option =>
-                    {
-                        option.NoneSrc = true;
-                        option.Enabled = true;
-                    });
-
-                    csp.BaseUris(options =>
-                    {
-                        options.SelfSrc = true;
-                        options.Enabled = true;
-                    });
-
-                    csp.ObjectSources(options =>
-                    {
-                        options.NoneSrc = true;
-                        options.Enabled = true;
-                    });
-
                     csp.DefaultSources(options =>
                     {
-                        options.Enabled = true;
                         options.SelfSrc = true;
                         options.CustomSources = cspTrustedDomains;
+                        options.Enabled = true;
                     });
                 });
             }
@@ -203,6 +178,12 @@ namespace Identity.STS.Identity.Helpers
             {
                 case DatabaseProviderType.SqlServer:
                     services.RegisterSqlServerDbContexts<TIdentityDbContext, TConfigurationDbContext, TPersistedGrantDbContext, TDataProtectionDbContext>(identityConnectionString, configurationConnectionString, persistedGrantsConnectionString, dataProtectionConnectionString);
+                    break;
+                case DatabaseProviderType.PostgreSQL:
+                    services.RegisterNpgSqlDbContexts<TIdentityDbContext, TConfigurationDbContext, TPersistedGrantDbContext, TDataProtectionDbContext>(identityConnectionString, configurationConnectionString, persistedGrantsConnectionString, dataProtectionConnectionString);
+                    break;
+                case DatabaseProviderType.MySql:
+                    services.RegisterMySqlDbContexts<TIdentityDbContext, TConfigurationDbContext, TPersistedGrantDbContext, TDataProtectionDbContext>(identityConnectionString, configurationConnectionString, persistedGrantsConnectionString, dataProtectionConnectionString);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(databaseProvider.ProviderType), $@"The value needs to be one of {string.Join(", ", Enum.GetNames(typeof(DatabaseProviderType)))}.");
@@ -345,9 +326,20 @@ namespace Identity.STS.Identity.Helpers
             where TConfigurationDbContext : DbContext, IAdminConfigurationDbContext
             where TUserIdentity : class
         {
-            var configurationSection = configuration.GetSection(nameof(IdentityServerOptions));
+            var advancedConfiguration = configuration.GetSection(nameof(AdvancedConfiguration)).Get<AdvancedConfiguration>();
 
-            var builder = services.AddIdentityServer(options => configurationSection.Bind(options))
+            var builder = services.AddIdentityServer(options =>
+                {
+                    options.Events.RaiseErrorEvents = true;
+                    options.Events.RaiseInformationEvents = true;
+                    options.Events.RaiseFailureEvents = true;
+                    options.Events.RaiseSuccessEvents = true;
+                    
+                    if (!string.IsNullOrEmpty(advancedConfiguration.IssuerUri))
+                    {
+                        options.IssuerUri = advancedConfiguration.IssuerUri;
+                    }
+                })
                 .AddConfigurationStore<TConfigurationDbContext>()
                 .AddOperationalStore<TPersistedGrantDbContext>()
                 .AddAspNetIdentity<TUserIdentity>();
@@ -355,7 +347,7 @@ namespace Identity.STS.Identity.Helpers
             builder.AddCustomSigningCredential(configuration);
             builder.AddCustomValidationKey(configuration);
             builder.AddExtensionGrantValidator<DelegationGrantValidator>();
-
+            builder.AddCustomUserStore();
             return builder;
         }
 
@@ -390,7 +382,7 @@ namespace Identity.STS.Identity.Helpers
                     options.Instance = externalProviderConfiguration.AzureInstance;
                     options.Domain = externalProviderConfiguration.AzureDomain;
                     options.CallbackPath = externalProviderConfiguration.AzureAdCallbackPath;
-                },  cookieScheme: null);
+                });
             }
         }
 
@@ -459,6 +451,24 @@ namespace Identity.STS.Identity.Helpers
                             .AddSqlServer(dataProtectionDbConnectionString, name: "DataProtectionDb",
                                 healthQuery: $"SELECT TOP 1 * FROM dbo.[{dataProtectionTableName}]");
 
+                        break;
+                    case DatabaseProviderType.PostgreSQL:
+                        healthChecksBuilder
+                            .AddNpgSql(configurationDbConnectionString, name: "ConfigurationDb",
+                                healthQuery: $"SELECT * FROM \"{configurationTableName}\" LIMIT 1")
+                            .AddNpgSql(persistedGrantsDbConnectionString, name: "PersistentGrantsDb",
+                                healthQuery: $"SELECT * FROM \"{persistedGrantTableName}\" LIMIT 1")
+                            .AddNpgSql(identityDbConnectionString, name: "IdentityDb",
+                                healthQuery: $"SELECT * FROM \"{identityTableName}\" LIMIT 1")
+                            .AddNpgSql(dataProtectionDbConnectionString, name: "DataProtectionDb",
+                                healthQuery: $"SELECT * FROM \"{dataProtectionTableName}\"  LIMIT 1");
+                        break;
+                    case DatabaseProviderType.MySql:
+                        healthChecksBuilder
+                            .AddMySql(configurationDbConnectionString, name: "ConfigurationDb")
+                            .AddMySql(persistedGrantsDbConnectionString, name: "PersistentGrantsDb")
+                            .AddMySql(identityDbConnectionString, name: "IdentityDb")
+                            .AddMySql(dataProtectionDbConnectionString, name: "DataProtectionDb");
                         break;
                     default:
                         throw new NotImplementedException($"Health checks not defined for database provider {databaseProvider.ProviderType}");

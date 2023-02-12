@@ -17,6 +17,7 @@ namespace Identity.Admin.BusinessLogic.Dtos.Configuration
             AllowedCorsOrigins = new List<string>();
             AllowedGrantTypes = new List<string>();
             Claims = new List<ClientClaimDto>();
+            ClientSecrets = new List<ClientSecretDto>();
             Properties = new List<ClientPropertyDto>();
             AllowedIdentityTokenSigningAlgorithms = new List<string>();
         }
@@ -101,6 +102,7 @@ namespace Identity.Admin.BusinessLogic.Dtos.Configuration
         public string AllowedScopesItems { get; set; }
 
         public List<ClientClaimDto> Claims { get; set; }
+        public List<ClientSecretDto> ClientSecrets { get; set; }
         public List<ClientPropertyDto> Properties { get; set; }
 
         public DateTime? Updated { get; set; }

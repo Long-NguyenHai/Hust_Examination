@@ -168,7 +168,7 @@ namespace Identity.Admin.BusinessLogic.Services
             return added;
         }
 
-        public virtual async Task<int> UpdateClientAsync(ClientDto client, bool updateClientClaims = false, bool updateClientProperties = false)
+        public virtual async Task<int> UpdateClientAsync(ClientDto client)
         {
             var canInsert = await CanInsertClientAsync(client);
             if (!canInsert)
@@ -180,7 +180,7 @@ namespace Identity.Admin.BusinessLogic.Services
 
             var originalClient = await GetClientAsync(client.Id);
 
-            var updated = await ClientRepository.UpdateClientAsync(clientEntity, updateClientClaims, updateClientProperties);
+            var updated = await ClientRepository.UpdateClientAsync(clientEntity);
 
             await AuditEventLogger.LogEventAsync(new ClientUpdatedEvent(originalClient, client));
 

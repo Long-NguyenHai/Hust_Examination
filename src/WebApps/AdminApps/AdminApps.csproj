@@ -4,6 +4,9 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+		<GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
+
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -12,6 +15,6 @@
 		<PackageReference Include="MudBlazor" Version="6.0.13" />
 		<PackageReference Include="MudBlazor.ThemeManager" Version="1.0.7" />
 	</ItemGroup>
-	
+		
 	
 </Project>

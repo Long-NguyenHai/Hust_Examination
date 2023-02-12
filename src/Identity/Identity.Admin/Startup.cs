@@ -10,10 +10,10 @@ using Skoruba.AuditLogging.EntityFramework.Entities;
 using Identity.Admin.Configuration.Database;
 using Identity.Admin.EntityFramework.Shared.DbContexts;
 using Identity.Admin.EntityFramework.Shared.Entities.Identity;
-using Identity.Admin.Helpers;
 using Identity.Shared.Configuration.Helpers;
 using Identity.Shared.Dtos;
 using Identity.Shared.Dtos.Identity;
+using System.Net;
 
 namespace Identity.Admin
 {
@@ -41,13 +41,8 @@ namespace Identity.Admin
                 IdentityUserClaimsDto, IdentityUserProviderDto, IdentityUserProvidersDto, IdentityUserChangePasswordDto,
                 IdentityRoleClaimsDto, IdentityUserClaimDto, IdentityRoleClaimDto>(ConfigureUIOptions);
 
-            // Monitor changes in Admin UI views
-            services.AddAdminUIRazorRuntimeCompilation(HostingEnvironment);
-
             // Add email senders which is currently setup for SendGrid and SMTP
             services.AddEmailSenders(Configuration);
-
-            
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)

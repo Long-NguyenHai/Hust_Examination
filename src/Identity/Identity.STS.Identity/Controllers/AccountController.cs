@@ -299,15 +299,7 @@ namespace Identity.STS.Identity.Controllers
                         }
                         break;
                     case LoginResolutionPolicy.Username:
-                        try
-                        {
-                            user = await _userManager.FindByNameAsync(model.Username);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError("Error retrieving user by userName ({0}) for forgot password functionality: {1}", model.Username, ex.Message);
-                            user = null;
-                        }
+                        user = await _userManager.FindByNameAsync(model.Username);
                         break;
                 }
 

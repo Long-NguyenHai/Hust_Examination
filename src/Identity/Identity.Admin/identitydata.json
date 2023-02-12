@@ -10,13 +10,19 @@
         "Username": "admin",
         "Password": "Admin@123$",
         "Email": "admin@longhust.com.vn",
-        "Roles": [
-          "Administrator"
-        ],
+        "Roles": [ "Administrator" ],
         "Claims": [
           {
             "Type": "name",
             "Value": "admin"
+          },
+          {
+            "Type": "given_name",
+            "Value": "Long"
+          },
+          {
+            "Type": "family_name",
+            "Value": "Trang"
           }
         ]
       }

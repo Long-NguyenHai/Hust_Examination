@@ -58,7 +58,7 @@ namespace Identity.Shared.Configuration.Helpers
             where TDbContext : DbContext, IDataProtectionKeyContext
         {
             var dataProtectionBuilder = services.AddDataProtection()
-                .SetApplicationName("Skoruba.IdentityServer4")
+                .SetApplicationName("Identity")
                 .PersistKeysToDbContext<TDbContext>();
 
             if (dataProtectionConfiguration.ProtectKeysWithAzureKeyVault)

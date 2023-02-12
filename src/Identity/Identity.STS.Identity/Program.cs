@@ -47,7 +47,7 @@ namespace Identity.STS.Identity
 
             if (isDevelopment)
             {
-                configurationBuilder.AddUserSecrets<Startup>(true);
+                configurationBuilder.AddUserSecrets<Startup>();
             }
 
             var configuration = configurationBuilder.Build();
@@ -74,7 +74,7 @@ namespace Identity.STS.Identity
 
                      if (env.IsDevelopment())
                      {
-                         configApp.AddUserSecrets<Startup>(true);
+                         configApp.AddUserSecrets<Startup>();
                      }
 
                      configurationRoot.AddAzureKeyVaultConfiguration(configApp);
@@ -86,6 +86,7 @@ namespace Identity.STS.Identity
                 {
                     webBuilder.ConfigureKestrel(options => options.AddServerHeader = false);
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.UseIISIntegration();
                 })
                 .UseSerilog((hostContext, loggerConfig) =>
                 {
